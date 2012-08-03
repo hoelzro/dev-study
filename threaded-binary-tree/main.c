@@ -23,5 +23,7 @@ main(void)
 
     tbt_traverse(tree, print_node, NULL);
 
+    tbt_destroy(tree);
+
     return 0;
 }
