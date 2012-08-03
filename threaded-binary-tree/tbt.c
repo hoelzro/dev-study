@@ -91,3 +91,15 @@ tbt_traverse(struct tbt *tree, void (*callback)(int, void *), void *udata)
         node = node->next;
     }
 }
+
+void
+tbt_destroy(struct tbt *tree)
+{
+    struct tbt_node *node = tree->start;
+    while(node) {
+        struct tbt_node *old_node = node;
+        node = node->next;
+        free(old_node);
+    }
+    free(tree);
+}
