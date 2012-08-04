@@ -3,7 +3,7 @@
 
 struct tbt;
 
-struct tbt *tbt_new(int value);
+struct tbt *tbt_new(void);
 
 int tbt_add(struct tbt *tree, int value);
 

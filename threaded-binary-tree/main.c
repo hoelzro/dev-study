@@ -12,8 +12,9 @@ main(void)
 {
     struct tbt *tree;
 
-    tree = tbt_new(4);
+    tree = tbt_new();
 
+    tbt_add(tree, 4);
     tbt_add(tree, 1);
     tbt_add(tree, 6);
     tbt_add(tree, 7);

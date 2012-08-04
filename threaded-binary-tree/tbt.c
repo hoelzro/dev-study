@@ -16,7 +16,7 @@ struct tbt {
 };
 
 struct tbt *
-tbt_new(int value)
+tbt_new(void)
 {
     struct tbt *tree;
 
@@ -25,14 +25,8 @@ tbt_new(int value)
         return NULL;
     }
 
-    tree->root = malloc(sizeof(struct tbt_node));
-    if(! tree->root) {
-        return NULL;
-    }
-    tree->start = tree->root;
-
-    memset(tree->root, sizeof(struct tbt_node), 0);
-    tree->root->value = value;
+    tree->root  = NULL;
+    tree->start = NULL;
 
     return tree;
 }
@@ -51,6 +45,11 @@ tbt_add(struct tbt *tree, int value)
 
     if(! new_node) {
         return 0;
+    }
+
+    if(! tree->root) {
+        tree->root = new_node;
+        return 1;
     }
 
     while(1) {
