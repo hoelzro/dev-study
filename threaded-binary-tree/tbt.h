@@ -11,4 +11,6 @@ void tbt_traverse(struct tbt *tree, void (*callback)(int, void *), void *udata);
 
 void tbt_destroy(struct tbt *tree);
 
+void tbt_delete(struct tbt *tree, int value);
+
 #endif
