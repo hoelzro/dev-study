@@ -48,7 +48,8 @@ tbt_add(struct tbt *tree, int value)
     }
 
     if(! tree->root) {
-        tree->root = new_node;
+        tree->root  = new_node;
+        tree->start = new_node;
         return 1;
     }
 
