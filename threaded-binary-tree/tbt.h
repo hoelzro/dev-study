@@ -13,4 +13,6 @@ void tbt_destroy(struct tbt *tree);
 
 void tbt_delete(struct tbt *tree, int value);
 
+void tbt_dump(struct tbt *tree);
+
 #endif

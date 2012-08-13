@@ -180,3 +180,29 @@ tbt_delete(struct tbt *tree, int value)
         }
     }
 }
+
+static void
+_dump_node(struct tbt_node *node, int level)
+{
+    int i;
+
+    for(i = 0; i < level; i++) {
+        printf("  ");
+    }
+    printf("%p -> %p [%d]\n", node, node->next, node->value);
+
+    if(node->left) {
+        _dump_node(node->left, level + 1);
+    }
+
+    if(node->right) {
+        _dump_node(node->right, level + 1);
+    }
+}
+
+void
+tbt_dump(struct tbt *tree)
+{
+    printf("start = %p\n", tree->start);
+    _dump_node(tree->root, 0);
+}
