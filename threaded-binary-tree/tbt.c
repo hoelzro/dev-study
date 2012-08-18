@@ -31,13 +31,32 @@ tbt_new(void)
     return tree;
 }
 
+static void
+_add_helper(struct tbt_node *node, struct tbt_node *new_node, struct tbt_node **start, struct tbt_node *cont)
+{
+    if(new_node->value < node->value) {
+        if(node->left) {
+            _add_helper(node->left, new_node, start, node);
+        } else {
+            node->left     = new_node;
+            new_node->next = node;
+            *start         = new_node;
+        }
+    } else if(new_node->value > node->value) {
+        if(node->right) {
+            _add_helper(node->right, new_node, &(node->next), cont);
+        } else {
+            node->right    = new_node;
+            node->next     = new_node;
+            new_node->next = cont;
+        }
+    }
+}
+
 int
 tbt_add(struct tbt *tree, int value)
 {
-    struct tbt_node *node     = tree->root;
     struct tbt_node *new_node = NULL;
-    struct tbt_node *cont     = NULL;
-    struct tbt_node **start   = &(tree->start);
 
     new_node = malloc(sizeof(struct tbt_node));
     memset(new_node, 0, sizeof(struct tbt_node));
@@ -53,34 +72,7 @@ tbt_add(struct tbt *tree, int value)
         return 1;
     }
 
-    while(1) {
-        int node_value = node->value;
-
-        if(value < node_value) {
-            if(node->left) {
-                cont = node;
-                node = node->left;
-            } else {
-                node->left     = new_node;
-                new_node->next = node;
-                *start         = new_node;
-                break;
-            }
-        } else if(value > node_value){
-            if(node->right) {
-                start = &(node->next);
-                node  = node->right;
-            } else {
-                node->right    = new_node;
-                node->next     = new_node;
-                new_node->next = cont;
-                break;
-            }
-        } else {
-            break;
-        }
-    }
-
+    _add_helper(tree->root, new_node, &(tree->start), NULL);
     return 1;
 }
 
