@@ -56,7 +56,7 @@ tbt_add(struct tbt *tree, int value)
     while(1) {
         int node_value = node->value;
 
-        if(value <= node_value) {
+        if(value < node_value) {
             if(node->left) {
                 cont = node;
                 node = node->left;
@@ -66,7 +66,7 @@ tbt_add(struct tbt *tree, int value)
                 *start         = new_node;
                 break;
             }
-        } else {
+        } else if(value > node_value){
             if(node->right) {
                 start = &(node->next);
                 node  = node->right;
@@ -76,6 +76,8 @@ tbt_add(struct tbt *tree, int value)
                 new_node->next = cont;
                 break;
             }
+        } else {
+            break;
         }
     }
 
