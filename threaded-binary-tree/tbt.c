@@ -238,3 +238,19 @@ tbt_dump(struct tbt *tree)
     printf("start = %p\n", tree->start);
     _dump_node(tree->root, 0);
 }
+
+int
+tbt_contains(struct tbt *tree, int value)
+{
+    struct tbt_node *node = tree->root;
+
+    while(node && node->value != value) {
+        if(value < node->value) {
+            node = node->left;
+        } else {
+            node = node->right;
+        }
+    }
+
+    return node ? 1 : 0;
+}

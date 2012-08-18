@@ -15,4 +15,6 @@ void tbt_delete(struct tbt *tree, int value);
 
 void tbt_dump(struct tbt *tree);
 
+int tbt_contains(struct tbt *tree, int value);
+
 #endif
