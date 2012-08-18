@@ -100,6 +100,7 @@ construct_and_check_tree(const int *perm, size_t perm_len, void *udata)
     struct tbt *tree = NULL;
     int expected;
     int i;
+    int j;
 
     tree = construct_tree_from_sequence(perm, perm_len);
 
@@ -117,6 +118,13 @@ construct_and_check_tree(const int *perm, size_t perm_len, void *udata)
         tree = construct_tree_from_sequence(perm, perm_len);
         tbt_delete(tree, i);
         tbt_traverse(tree, check_traversal_order_with_gap, &gap_info);
+        for(j = 1; j <= 7; j++) {
+            if(i == j) {
+                assert(! tbt_contains(tree, j));
+            } else {
+                assert(tbt_contains(tree, j));
+            }
+        }
         tbt_destroy(tree);
     }
 }
