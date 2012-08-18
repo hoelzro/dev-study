@@ -6,6 +6,7 @@ struct tbt_node {
     struct tbt_node *left;
     struct tbt_node *right;
     struct tbt_node *next;
+    int height;
 
     int value;
 };
@@ -34,6 +35,8 @@ tbt_new(void)
 static void
 _add_helper(struct tbt_node *node, struct tbt_node *new_node, struct tbt_node **start, struct tbt_node *cont)
 {
+    int child_height;
+
     if(new_node->value < node->value) {
         if(node->left) {
             _add_helper(node->left, new_node, start, node);
@@ -42,6 +45,8 @@ _add_helper(struct tbt_node *node, struct tbt_node *new_node, struct tbt_node **
             new_node->next = node;
             *start         = new_node;
         }
+
+        child_height = node->left->height;
     } else if(new_node->value > node->value) {
         if(node->right) {
             _add_helper(node->right, new_node, &(node->next), cont);
@@ -50,6 +55,12 @@ _add_helper(struct tbt_node *node, struct tbt_node *new_node, struct tbt_node **
             node->next     = new_node;
             new_node->next = cont;
         }
+
+        child_height = node->right->height;
+    }
+
+    if(child_height + 1 > node->height) {
+        node->height = child_height + 1;
     }
 }
 
@@ -60,7 +71,8 @@ tbt_add(struct tbt *tree, int value)
 
     new_node = malloc(sizeof(struct tbt_node));
     memset(new_node, 0, sizeof(struct tbt_node));
-    new_node->value = value;
+    new_node->value  = value;
+    new_node->height = 1;
 
     if(! new_node) {
         return 0;
@@ -272,5 +284,5 @@ _height_helper(struct tbt_node *node)
 int
 tbt_height(struct tbt *tree)
 {
-    return _height_helper(tree->root);
+    return tree->root ? tree->root->height : 0;
 }
