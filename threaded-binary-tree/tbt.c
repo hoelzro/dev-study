@@ -40,7 +40,7 @@ tbt_add(struct tbt *tree, int value)
     struct tbt_node **start   = &(tree->start);
 
     new_node = malloc(sizeof(struct tbt_node));
-    memset(new_node, sizeof(struct tbt_node), 0);
+    memset(new_node, 0, sizeof(struct tbt_node));
     new_node->value = value;
 
     if(! new_node) {
