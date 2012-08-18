@@ -17,4 +17,6 @@ void tbt_dump(struct tbt *tree);
 
 int tbt_contains(struct tbt *tree, int value);
 
+int tbt_height(struct tbt *tree);
+
 #endif

@@ -256,3 +256,29 @@ tbt_contains(struct tbt *tree, int value)
 
     return node ? 1 : 0;
 }
+
+static int
+_height_helper(struct tbt_node *node)
+{
+    if(node == NULL) {
+        return 0;
+    } else {
+        int left_height;
+        int right_height;
+
+        left_height  = _height_helper(node->left);
+        right_height = _height_helper(node->right);
+
+        if(left_height > right_height) {
+            return left_height + 1;
+        } else  {
+            return right_height + 1;
+        }
+    }
+}
+
+int
+tbt_height(struct tbt *tree)
+{
+    return _height_helper(tree->root);
+}
