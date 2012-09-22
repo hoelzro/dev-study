@@ -28,8 +28,7 @@ class Cell
   def initialize(x, y)
     @x     = x
     @y     = y
-    # XXX shared edges
-    @edges = (1 .. 4).map { Edge.new }
+    @edges = []
   end
 
   def render_to(renderer)
@@ -54,6 +53,10 @@ class Cell
     define_method (name + '_edge').to_sym do
       @edges[index]
     end
+
+    define_method (name + '_edge=').to_sym do |value|
+      @edges[index] = value
+    end
   end
 end
 
@@ -64,6 +67,7 @@ class Maze
     end
 
     @rows = build_rows width, height
+    build_edges
   end
 
   def render_to(renderer)
@@ -82,6 +86,45 @@ class Maze
     end
   end
 
+  def build_edges
+    each_row do |row|
+      row.inject do |left, right|
+        left.right_edge = right.left_edge = Edge.new
+        right
+      end
+    end
+
+    index             = 0
+    last_column_index = @rows.first.length - 1
+
+    each_column do |column|
+      column.inject do |top, bottom|
+        top.bottom_edge = bottom.top_edge = Edge.new
+        bottom
+      end
+
+      if index == 0
+        column.each do |cell|
+          cell.left_edge = Edge.new
+        end
+      elsif index == last_column_index
+        column.each do |cell|
+          cell.right_edge = Edge.new
+        end
+      end
+
+      index += 1
+    end
+
+    @rows.first.each do |cell|
+      cell.top_edge = Edge.new
+    end
+
+    @rows.last.each do |cell|
+      cell.bottom_edge = Edge.new
+    end
+  end
+
   def each_cell(&block)
     each_row do |row|
       row.each &block
@@ -90,5 +133,14 @@ class Maze
 
   def each_row(&block)
     @rows.each &block
+  end
+
+  def each_column
+    first_row = @rows.first
+
+    (0 .. first_row.length - 1).each do |index|
+      column = @rows.map { |row| row[index] }
+      yield column
+    end
   end
 end
