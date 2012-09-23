@@ -26,6 +26,23 @@ class Cell
     @edges = []
   end
 
+  def open_outer_edge
+    if x == 0
+      if y == 0
+        # XXX should the RNG be used to select which edge?
+        top_edge.open
+      else
+        left_edge.open
+      end
+    else # we'll trust that we're actually opening an edge cell
+      if y == 0
+        top_edge.open
+      else
+        bottom_edge.open
+      end
+    end
+  end
+
   %w(top bottom left right).each_with_index do |name, index|
     define_method (name + '_edge').to_sym do
       @edges[index]
@@ -38,6 +55,9 @@ class Cell
 end
 
 class Maze
+  attr_accessor :start
+  attr_accessor :finish
+
   def initialize(width, height)
     if width != height
       raise 'Non-square mazes are not yet supported'
@@ -66,7 +86,31 @@ class Maze
     end
   end
 
+  def edge_cells
+    [ top_row, bottom_row, left_column, right_column ].flatten.uniq
+  end
+
+  def start=(cell)
+    @start = cell
+    cell.open_outer_edge
+  end
+
+  def finish=(cell)
+    @finish = cell
+    cell.open_outer_edge
+  end
+
   private
+
+  def columns
+    columns = []
+
+    each_column do |column|
+      columns.push column
+    end
+
+    columns
+  end
 
   def build_rows(width, height)
     (1 .. height).map do |y|
@@ -113,5 +157,21 @@ class Maze
     @rows.last.each do |cell|
       cell.bottom_edge = Edge.new
     end
+  end
+
+  def top_row
+    @rows[0]
+  end
+
+  def bottom_row
+    @rows[-1]
+  end
+
+  def left_column
+    columns[0]
+  end
+
+  def right_column
+    columns[-1]
   end
 end
