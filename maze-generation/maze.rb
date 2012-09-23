@@ -28,19 +28,25 @@ class Cell
   end
 
   def open_outer_edge
-    if x == 0
-      if y == 0
-        # XXX should the RNG be used to select which edge?
-        top_edge.open
-      else
-        left_edge.open
-      end
-    else # we'll trust that we're actually opening an edge cell
-      if y == 0
-        top_edge.open
-      else
-        bottom_edge.open
-      end
+    # XXX should the RNG be used to select which edge for corners?
+    if @maze.top_row.include? self
+      top_edge.open
+      return
+    end
+
+    if @maze.bottom_row.include? self
+      bottom_edge.open
+      return
+    end
+
+    if @maze.left_column.include? self
+      left_edge.open
+      return
+    end
+
+    if @maze.right_column.include? self
+      right_edge.open
+      return
     end
   end
 
