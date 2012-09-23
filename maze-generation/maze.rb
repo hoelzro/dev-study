@@ -76,6 +76,25 @@ class Maze
     end
   end
 
+  def each_cell(&block)
+    each_row do |row|
+      row.each &block
+    end
+  end
+
+  def each_row(&block)
+    @rows.each &block
+  end
+
+  def each_column
+    first_row = @rows.first
+
+    (0 .. first_row.length - 1).each do |index|
+      column = @rows.map { |row| row[index] }
+      yield column
+    end
+  end
+
   private
 
   def build_rows(width, height)
@@ -122,25 +141,6 @@ class Maze
 
     @rows.last.each do |cell|
       cell.bottom_edge = Edge.new
-    end
-  end
-
-  def each_cell(&block)
-    each_row do |row|
-      row.each &block
-    end
-  end
-
-  def each_row(&block)
-    @rows.each &block
-  end
-
-  def each_column
-    first_row = @rows.first
-
-    (0 .. first_row.length - 1).each do |index|
-      column = @rows.map { |row| row[index] }
-      yield column
     end
   end
 end
