@@ -17,11 +17,6 @@ class Edge
 end
 
 class Cell
-  X_OFFSET    = 5
-  Y_OFFSET    = 5
-  CELL_WIDTH  = 20
-  CELL_HEIGHT = 20
-
   attr_reader :x
   attr_reader :y
 
@@ -29,24 +24,6 @@ class Cell
     @x     = x
     @y     = y
     @edges = []
-  end
-
-  def render_to(renderer)
-    if top_edge.closed?
-      renderer.draw_line X_OFFSET + CELL_WIDTH  * @x, Y_OFFSET + CELL_HEIGHT * @y, CELL_WIDTH, 0
-    end
-
-    if left_edge.closed?
-      renderer.draw_line X_OFFSET + CELL_WIDTH  * @x, Y_OFFSET + CELL_HEIGHT * @y, 0, CELL_HEIGHT
-    end
-
-    if bottom_edge.closed?
-      renderer.draw_line X_OFFSET + CELL_WIDTH  * @x, Y_OFFSET + CELL_HEIGHT * (@y + 1), CELL_WIDTH, 0
-    end
-
-    if right_edge.closed?
-      renderer.draw_line X_OFFSET + CELL_WIDTH * (@x + 1), Y_OFFSET + CELL_HEIGHT * @y, 0, CELL_HEIGHT
-    end
   end
 
   %w(top bottom left right).each_with_index do |name, index|
@@ -68,12 +45,6 @@ class Maze
 
     @rows = build_rows width, height
     build_edges
-  end
-
-  def render_to(renderer)
-    each_cell do |cell|
-      cell.render_to renderer
-    end
   end
 
   def each_cell(&block)
