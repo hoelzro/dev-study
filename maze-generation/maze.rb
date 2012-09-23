@@ -20,7 +20,8 @@ class Cell
   attr_reader :x
   attr_reader :y
 
-  def initialize(x, y)
+  def initialize(maze, x, y)
+    @maze  = maze
     @x     = x
     @y     = y
     @edges = []
@@ -115,7 +116,7 @@ class Maze
   def build_rows(width, height)
     (1 .. height).map do |y|
       (1 .. width).map do |x|
-        Cell.new x - 1, y - 1
+        Cell.new self, x - 1, y - 1
       end
     end
   end
