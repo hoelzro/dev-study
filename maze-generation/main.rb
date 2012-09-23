@@ -1,6 +1,7 @@
 $:.push '.'
 
 require 'maze'
+require 'generator'
 require 'renderer'
 require 'gtk2'
 
@@ -17,6 +18,8 @@ class MazeGenerator < Gtk::Window
     @canvas   = Gtk::DrawingArea.new
     @maze     = Maze.new width, height
     @renderer = Renderer.new @canvas
+    generator = Generator.new @maze
+    generator.generate
 
     window_width, window_height = @renderer.calculate_size width, height
 
