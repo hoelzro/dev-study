@@ -101,6 +101,22 @@ class Maze
     cell.open_outer_edge
   end
 
+  def top_row
+    @rows[0]
+  end
+
+  def bottom_row
+    @rows[-1]
+  end
+
+  def left_column
+    columns[0]
+  end
+
+  def right_column
+    columns[-1]
+  end
+
   private
 
   def columns
@@ -158,21 +174,5 @@ class Maze
     @rows.last.each do |cell|
       cell.bottom_edge = Edge.new
     end
-  end
-
-  def top_row
-    @rows[0]
-  end
-
-  def bottom_row
-    @rows[-1]
-  end
-
-  def left_column
-    columns[0]
-  end
-
-  def right_column
-    columns[-1]
   end
 end
