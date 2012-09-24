@@ -123,6 +123,42 @@ class Maze
     columns[-1]
   end
 
+  def find_neighbors(cell)
+    x         = cell.x
+    y         = cell.y
+    neighbors = []
+
+    if x != 0
+      neighbors.push @rows[y][x - 1]
+    end
+
+    if y != 0
+      neighbors.push @rows[y - 1][x]
+    end
+
+    if x != @rows.length - 1
+      neighbors.push @rows[y][x + 1]
+    end
+
+    if y != columns.length - 1 # XXX inefficient
+      neighbors.push @rows[y + 1][x]
+    end
+
+    neighbors
+  end
+
+  def open_edge(cell1, cell2)
+    if cell1.x < cell2.x
+      cell1.right_edge.open
+    elsif cell1.x > cell2.x
+      cell1.left_edge.open
+    elsif cell1.y < cell2.y
+      cell1.bottom_edge.open
+    else
+      cell1.top_edge.open
+    end
+  end
+
   private
 
   def columns
