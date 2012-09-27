@@ -159,6 +159,14 @@ class Maze
     end
   end
 
+  def width
+    @rows[0].size
+  end
+
+  def height
+    @rows.size
+  end
+
   private
 
   def columns

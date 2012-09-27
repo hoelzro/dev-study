@@ -6,12 +6,18 @@ class Renderer
   CELL_WIDTH  = 20
   CELL_HEIGHT = 20
 
-  def initialize(canvas)
-    @canvas = canvas
+  def initialize(canvas_or_filename)
+    if canvas_or_filename.is_a? String
+      @mode     = :file
+      @filename = canvas_or_filename
+    else
+      @mode   = :gtk
+      @canvas = canvas_or_filename
+    end
   end
 
   def render(maze)
-    init_drawing
+    init_drawing maze
 
     maze.each_cell do |cell|
       if cell.top_edge.closed?
@@ -29,6 +35,10 @@ class Renderer
       if cell.right_edge.closed?
         draw_line X_OFFSET + CELL_WIDTH * (cell.x + 1), Y_OFFSET + CELL_HEIGHT * cell.y, 0, CELL_HEIGHT
       end
+    end
+
+    if @mode == :file
+      @surface.write_to_png @filename
     end
   end
 
@@ -48,11 +58,16 @@ class Renderer
     @ctx.stroke
   end
 
-  def init_drawing
-    @ctx = @canvas.window.create_cairo_context
-
-    width  = @canvas.allocation.width
-    height = @canvas.allocation.height
+  def init_drawing(maze)
+    if @mode == :gtk
+      @ctx   = @canvas.window.create_cairo_context
+      width  = @canvas.allocation.width
+      height = @canvas.allocation.height
+    else
+      width, height = calculate_size maze.width, maze.height
+      @surface = Cairo::ImageSurface.new width, height
+      @ctx     = Cairo::Context.new @surface
+    end
 
     @ctx.rectangle 0, 0, width, height
     @ctx.set_source_rgba 1, 1, 1, 1

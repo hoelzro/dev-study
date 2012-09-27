@@ -3,52 +3,69 @@ $:.push '.'
 require 'maze'
 require 'generator'
 require 'renderer'
-require 'gtk2'
 
-class MazeGenerator < Gtk::Window
-  def initialize(width, height)
-    super()
+def do_file_mode(width, height, filename)
+  maze      = Maze.new width, height
+  renderer  = Renderer.new filename
+  generator = Generator.new maze
+  generator.generate
+  renderer.render maze
+end
 
-    set_title 'Maze Generator'
+def do_graphics_mode(width, height)
+  require 'gtk2'
 
-    signal_connect 'destroy' do
-      Gtk.main_quit
+  maze_generator = Class.new(Gtk::Window) do
+    def initialize(width, height)
+      super()
+
+      set_title 'Maze Generator'
+
+      signal_connect 'destroy' do
+        Gtk.main_quit
+      end
+
+      @canvas   = Gtk::DrawingArea.new
+      @maze     = Maze.new width, height
+      @renderer = Renderer.new @canvas
+      generator = Generator.new @maze
+      generator.generate
+
+      window_width, window_height = @renderer.calculate_size width, height
+
+      set_default_size window_width, window_height
+
+      add @canvas
+
+      @canvas.signal_connect 'expose-event' do
+        draw
+      end
+
+      show_all
     end
 
-    @canvas   = Gtk::DrawingArea.new
-    @maze     = Maze.new width, height
-    @renderer = Renderer.new @canvas
-    generator = Generator.new @maze
-    generator.generate
+    private
 
-    window_width, window_height = @renderer.calculate_size width, height
-
-    set_default_size window_width, window_height
-
-    add @canvas
-
-    @canvas.signal_connect 'expose-event' do
-      draw
+    def draw
+      @renderer.render @maze
     end
-
-    show_all
   end
 
-  private
-
-  def draw
-    @renderer.render @maze
-  end
+  Gtk.init
+  window = maze_generator.new width, height
+  Gtk.main
 end
 
 if ARGV.length < 2
-  puts "usage: #{$0} [width] [height]"
+  puts "usage: #{$0} width height [filename.png]"
   exit 1
 end
 
 width  = ARGV[0].to_i
-height = ARGV[0].to_i
+height = ARGV[1].to_i
 
-Gtk.init
-window = MazeGenerator.new width, height
-Gtk.main
+if ARGV.length > 2
+  do_file_mode width, height, ARGV[2]
+else
+  do_graphics_mode width, height
+end
