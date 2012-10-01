@@ -38,23 +38,30 @@ class Generator
   end
 
   def build_stepper
-    nodes   = [ @maze.start ]
+    pairs   = []
     visited = Set.new
 
+    neighbors = @maze.find_neighbors(@maze.start).shuffle random: @rng
+    neighbors.each do |neighbor|
+      pairs.push [ @maze.start, neighbor ]
+    end
+
+    visited.add @maze.start
+
     Enumerator.new do |y|
-      while not nodes.empty?
-        node = nodes.last
+      while not pairs.empty?
+        node, neighbor = pairs.pop
 
-        visited.add node
+        next if visited.include? neighbor
 
-        neighbors = @maze.find_neighbors node
+        visited.add neighbor
 
-        if neighbors.all? { |n| visited.include? n }
-          nodes.pop
-        else
-          neighbors = neighbors.shuffle random: @rng
-          @maze.open_edge node, neighbors.first
-          nodes.push neighbors.first
+        @maze.open_edge node, neighbor
+
+        neighbors = @maze.find_neighbors(neighbor).shuffle random: @rng
+
+        neighbors.each do |n|
+          pairs.push [ neighbor, n ]
         end
 
         y.yield
